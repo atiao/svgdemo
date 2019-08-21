@@ -43,7 +43,6 @@ $(document).mousedown(function (e) {
         var group = draw.group().addClass('group')
         m = "M" + mouseStartX + "," + mouseStartY ;
         path = group.path(m).stroke({ color: 'red', width: 10 }).fill('none').addClass('group')
-
     }
 })
 
@@ -71,7 +70,7 @@ $(document).on('touchstart', function (e) {
         if (isPrint && isPencil) {
             var group = draw.group().addClass('group')
             m = "M" + mouseStartX + "," + mouseStartY;
-            path = group.path(m).stroke({ color: 'green', width: 1 }).fill('none').addClass('group')
+            path = group.path(m).stroke({ color: 'green', width: 3 }).fill('none').addClass('group')
         }
         if(isErase) {
 
@@ -103,11 +102,12 @@ $(document).mouseup(function (e) {
 
 $(document).delegate('path.group', 'touchstart', function (e) {
     console.log(444,e.target,$(this))
+    $(e.target).remove()
     if(isMove) {
         // $(this).move(100,200)
         // $(this).move(33,44)
-        console.log('path',path)
-        path.draggable()
+        // console.log('path',path)
+        // path.draggable()
     }
     // $(this).remove()
 })
