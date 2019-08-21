@@ -24,6 +24,7 @@ $(document).ready(function () {
         alert('SVG not supported')
     }
     $pencil.click(function () {
+        // alert(444)
         isPencil = true;
     })
     $move.click(function () {
@@ -41,7 +42,7 @@ $(document).mousedown(function (e) {
     if (isPrint && isPencil) {
         var group = draw.group().addClass('group')
         m = "M" + mouseStartX + "," + mouseStartY ;
-        path = group.path(m).stroke({ color: 'green', width: 1 }).fill('none').addClass('group')
+        path = group.path(m).stroke({ color: 'red', width: 10 }).fill('none').addClass('group')
 
     }
 })
@@ -55,21 +56,61 @@ $(document).mousemove(function (e) {
     }
 })
 
+$(document).on('touchstart', function (e) {
+    console.log(e, $(e.target)[0].tagName, $(e.target))
+    var tagName = $(e.target)[0].tagName
+    if (tagName == 'BUTTON') {
+        return
+    }
+    if(tagName == "svg") {
+        var touch = e.originalEvent.targetTouches[0]
+        isPrint = true
+        mouseStartX = touch.pageX
+        mouseStartY = touch.pageY;
+        console.log('isPencil', isPencil)
+        if (isPrint && isPencil) {
+            var group = draw.group().addClass('group')
+            m = "M" + mouseStartX + "," + mouseStartY;
+            path = group.path(m).stroke({ color: 'green', width: 1 }).fill('none').addClass('group')
+        }
+        if(isErase) {
+
+        }
+    }
+})
+$(document).on('touchmove', function(e) {
+    // e.preventDefault();
+    var touch = e.originalEvent.targetTouches[0]
+    if (isPrint && isPencil) {
+        var x = touch.pageX;
+        var y = touch.pageY;
+        m += 'L' + x + ',' + y
+        path.plot(m)
+    }
+})
+
+$(document).on('touchend', function (e) {
+    isPencil = false
+})
+window.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+}, { passive: false })
+
 $(document).mouseup(function (e) {
     isPrint = false
     isPencil = false
 })
 
-// $(document).delegate('path.group', 'click', function (e) {
-//     console.log(444,e.target,$(this))
-//     if(isMove) {
-//         // $(this).move(100,200)
-//         // $(this).move(33,44)
-//         console.log('path',path)
-//         path.draggable()
-//     }
-//     // $(this).remove()
-// })
+$(document).delegate('path.group', 'touchstart', function (e) {
+    console.log(444,e.target,$(this))
+    if(isMove) {
+        // $(this).move(100,200)
+        // $(this).move(33,44)
+        console.log('path',path)
+        path.draggable()
+    }
+    // $(this).remove()
+})
 var offsetX = 0;
 var offsetY = 0;
 $(document).delegate('path.group', 'mousedown', function (e) {

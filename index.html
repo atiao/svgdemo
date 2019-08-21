@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
@@ -11,6 +11,11 @@
         }
         .ui-btn-box{
             margin-bottom: 30px;
+            margin-top: 30px;
+        }
+        button{
+            height: 40px;
+            border:1px solid red;
         }
         .drawing{
             width: 100%;
@@ -20,6 +25,7 @@
     </style>
 </head>
 <body>
+    <div id="drawing" class="drawing"></div>
     <div class="ui-btn-box">
         <button name="Pencil" class="a-pencil">画笔</button>
         <button name="Graph" class="a-graph">图形</button>
@@ -29,6 +35,6 @@
         <button name="Move" class="a-move">移动</button>
         <button name="Color" class="a-color">颜色</button>
     </div>
-    <div id="drawing" class="drawing"></div>
+    
 </body>
 </html>
