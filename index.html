@@ -2,31 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="src/js/font-awesome.min.css" />
+    <link rel="stylesheet" href="src/drawerJs.css" />
     <style>
         body,html{
             height: 100%;
         }
-        .ui-btn-box{
+        /* .ui-btn-box{
             margin-bottom: 30px;
             margin-top: 30px;
         }
         button{
             height: 40px;
             border:1px solid red;
-        }
-        .drawing{
+        } */
+        /* .drawing{
             width: 100%;
             height: 60%;
             border:3px solid yellowgreen;
-        }
+        } */
     </style>
 </head>
 <body>
-    <div id="drawing" class="drawing"></div>
-    <div class="ui-btn-box">
+    <div id="canvas-editor" class="drawing"></div>
+    <!-- <div class="ui-btn-box">
         <button name="Pencil" class="a-pencil">画笔</button>
         <button name="Graph" class="a-graph">图形</button>
         <button name="Text" class="a-text">文字</button>
@@ -34,7 +36,11 @@
         <button name="Clear" class="a-clear">清空</button>
         <button name="Move" class="a-move">移动</button>
         <button name="Color" class="a-color">颜色</button>
-    </div>
-    
+    </div> -->
+    <script src="src/js/jquery.js"></script>
+    <script src="src/js/drawerJs.standalone.js"></script>
+    <script src="src/js/drawlocal.js"></script>
+    <script src="src/js/drawConfig.js"></script>
+    <script src="src/js/index.js"></script>
 </body>
 </html>
