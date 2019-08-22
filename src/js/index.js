@@ -1,142 +1,147 @@
-import $ from "jquery";
 import SVG from "svg";
-
-var isPrint = false;
-var mouseStartX, mouseStartY,
-    isPencil, isGraph, isText, isErase, isClear, isMove, isColor,
-    draw,rect;
-
-$(document).ready(function () {
-    var $pencil = $('.a-pencil');
-    var $graph = $('.a-graph');
-    var $text = $('.a-text');
-    var $eraser = $('.a-eraser');
-    var $clear = $('.a-clear');
-    var $move = $('.a-move');
-    var $color = $('.a-color');
-
-    draw = SVG('drawing');
-
-    // rect = draw.rect(200,100)
-    draw.path('M0 0 H50 A20 20 0 1 0 100 50 v25 C50 125 0 85 0 85 z').move(200,100)
-    if (SVG.supported) {
-    } else {
-        alert('SVG not supported')
+;
+let drawer = (function() {
+    if (!SVG.supported) {
+        alert('当前浏览器不支持svg');
+        return;
     }
-    $pencil.click(function () {
-        // alert(444)
-        isPencil = true;
-    })
-    $move.click(function () {
-        isMove = true;
-        isPencil = false;
-        console.log(isMove, isPencil)
-    })
-});
-var m,path;
-$(document).mousedown(function (e) {
-    isPrint = true
-    mouseStartX = e.offsetX
-    mouseStartY = e.offsetY;
-    console.log('isPencil', isPencil)
-    if (isPrint && isPencil) {
-        var group = draw.group().addClass('group')
-        m = "M" + mouseStartX + "," + mouseStartY ;
-        path = group.path(m).stroke({ color: 'red', width: 10 }).fill('none').addClass('group')
+    let _options = {
+        inSvg: false,
+        isPencil: false,
+        isErase: false,
+        isClear: false,
+        btns: ['pencil', 'erase', 'clear','color','graph'],
+        color: 'red',
+        width: 1,
+        draw: null,
+        stX: 0,
+        stY: 0,
+        endX: 0,
+        endY: 0,
+        m: '',
+        path: null
     }
-})
+    let _drawer_api = {
+        init: function (id) {
+            _options.draw = SVG(id);
+            this.createBtns(id);
+            this.listen(id);
+            window.addEventListener('touchmove', function (e) {
+                e.preventDefault();
+            }, { passive: false })
+        },
+        createBtns: function (id) {
+            //添加操作按钮
+            let $drawBox = document.getElementById(id);
+            let $btnsBox = document.createElement('div');
+            $btnsBox.setAttribute('class', 'd-btns');
+            $drawBox.appendChild($btnsBox);
+            _options.btns.forEach((val, i) => {
+                var $node = document.createElement('button');
+                $node.click(function (e) {
+                    console.log('e', e)
+                })
+                $node.setAttribute('class', `d-${val}`);
+                $node.setAttribute('name', val);
+                $node.innerHTML = val;
+                $btnsBox.append($node);
+            });
+        },
+        listen: function (id) {
+            document.getElementById(id).addEventListener('touchstart', this.touchStart,false);
+            document.getElementById(id).addEventListener('touchmove', this.touchMove, false);
+            document.getElementById(id).addEventListener('touchend', this.touchEnd, false);
+        },
+        touchStart: function (e) {
+            let tagName = e.target.tagName;
+            if (tagName == 'BUTTON') {
+                let name = e.target.name
+                console.log('button')
+                switch (name) {
+                    case "pencil":
+                        _options.isPencil = true
+                        break;
+                    case "erase":
+                        _options.isErase = true
+                        break;
+                    case "clear":
+                        _options.isClear = true
+                        var set = _options.draw.set();
+                        console.log('set', set)
+                        set.clear()
+                        break;
+                    case "color":
+                        console.log('color')
+                        _options.color = 'green'
+                        break;
+                    case "graph":
+                        
+                        break;
 
-$(document).mousemove(function (e) {
-    if (isPrint && isPencil) {
-        var x = e.offsetX;
-        var y = e.offsetY;
-        m += 'L' + x + ',' + y
-        path.plot(m)
-    }
-})
+                    default:
+                        break;
+                }
+            } else if (tagName == 'svg') {
+                console.log('svg', e.changedTouches)
+                _options.inSvg = true;
+                let touch = e.changedTouches[0];
+                _options.stX = touch.pageX;
+                _options.stY = touch.pageY;
+                if (_options.isPencil) {
+                    let group = _options.draw.group().addClass('group');
+                    _options.m = `M${_options.stX},${_options.stY}`
+                    _options.path = group.path(_options.m).stroke({ color: _options.color, width: _options.width}).fill('none').addClass('path')
+                } 
+                
 
-$(document).on('touchstart', function (e) {
-    console.log(e, $(e.target)[0].tagName, $(e.target))
-    var tagName = $(e.target)[0].tagName
-    if (tagName == 'BUTTON') {
-        return
-    }
-    if(tagName == "svg") {
-        var touch = e.originalEvent.targetTouches[0]
-        isPrint = true
-        mouseStartX = touch.pageX
-        mouseStartY = touch.pageY;
-        console.log('isPencil', isPencil)
-        if (isPrint && isPencil) {
-            var group = draw.group().addClass('group')
-            m = "M" + mouseStartX + "," + mouseStartY;
-            path = group.path(m).stroke({ color: 'green', width: 3 }).fill('none').addClass('group')
-        }
-        if(isErase) {
+            } else if (tagName == 'path') {
+                if (_options.isErase) {
+                    // e.target
+                    let id = e.target.id;
+                    let tagName = e.target.tagName;
+                    console.log('path', 4444, tagName, id, e, document.getElementsByTagName('g'))
+                    // e.target.parentNode.remove();
+                }
+                
+            }
 
-        }
-    }
-})
-$(document).on('touchmove', function(e) {
-    // e.preventDefault();
-    var touch = e.originalEvent.targetTouches[0]
-    if (isPrint && isPencil) {
-        var x = touch.pageX;
-        var y = touch.pageY;
-        m += 'L' + x + ',' + y
-        path.plot(m)
-    }
-})
+            console.log('listen,tourch', e, e.target.tagName, _options.isErase)
 
-$(document).on('touchend', function (e) {
-    isPencil = false
-})
-window.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-}, { passive: false })
-
-$(document).mouseup(function (e) {
-    isPrint = false
-    isPencil = false
-})
-
-$(document).delegate('path.group', 'touchstart', function (e) {
-    console.log(444,e.target,$(this))
-    $(e.target).remove()
-    if(isMove) {
-        // $(this).move(100,200)
-        // $(this).move(33,44)
-        // console.log('path',path)
-        // path.draggable()
-    }
-    // $(this).remove()
-})
-var offsetX = 0;
-var offsetY = 0;
-$(document).delegate('path.group', 'mousedown', function (e) {
-    console.log(4444,$(this),555,e.target)
-    var stMouseX = e.offsetX;
-    var stMouseY = e.offsetY;
-    var stClientX = $(this).offsetTop
-    var stClientY = $(this).offsetLeft
-    console.log(7777, stMouseX, $(this), stClientX)
-    if(isMove) {
-        console.log(555, e.clientX, $(this).offset().left)
-        $(this).mousemove(function(e) {
-            var endMouseX = e.offsetX;
-            var endMouseY = e.offsetY;
-            var diffX = stMouseX - endMouseX;
-            var diffY = stMouseY - endMouseY;
-            console.log(7777, diffX, diffY, stMouseX, endMouseX,path)
-            path.move(diffX, diffY)
-            // $(this).css({
-            //     left: e.clientX - offsetX,
-            //     top: e.clientY - offsetY
+        },
+        touchMove: function (e) {
+            let touch = e.changedTouches[0]
+            if (_options.inSvg && _options.isPencil) {
+                let x = touch.pageX;
+                let y = touch.pageY
+                _options.m += `L${x},${y}`
+                _options.path.plot(_options.m)
+            }
+        },
+        touchEnd: function (e) {
+            _options.inSvg = false;
+        },
+        pencil: function() {
+            console.log('pencil',this)
+        },
+        erase: function(e) {
+            console.log('erase', e)
+            // document.getElementsByTagName('path').addEventListener('touchstart', function (e) {
+            //     console.log('erase', this)
+            //     if(_options.isClear) {
+                    
+            //     }
             // })
+        },
+        clear: function() {
+            console.log('clear',this)
+        },
+        color: function() {
+            console.log('color', this)
+        },
 
-        })
-        // $(document).delegate('rect', function (e) {
-        //     $(this).off("mousemove")
-        // })
     }
-})
+
+    return _drawer_api;
+})();
+
+drawer.init('drawing')
